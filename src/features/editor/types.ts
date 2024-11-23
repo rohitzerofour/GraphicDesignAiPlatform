@@ -68,6 +68,7 @@ export type BuildEditorProps = {
 };
 
 export interface Editor {
+  addImage: (value: string) => void;
   addCircle: () => void;
   addSoftRectangle: () => void;
   addRectangle: () => void;

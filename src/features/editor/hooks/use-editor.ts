@@ -32,6 +32,20 @@ const buildEditor = ({ canvas }: BuildEditorProps): Editor => {
   };
 
   return {
+    addImage: (value: string) => {
+      fabric.Image.fromURL(
+        value,
+        (image) => {
+          const workspace = getWorkspace();
+          image.scaleToWidth(workspace?.width || 0);
+          image.scaleToHeight(workspace?.height || 0);
+          addToCanvas(image);
+        },
+        {
+          crossOrigin: "anonymous",
+        }
+      );
+    },
     addCircle: () => {
       const object = new fabric.Circle({
         ...CIRCLE_OPTIONS,
@@ -80,7 +94,7 @@ const buildEditor = ({ canvas }: BuildEditorProps): Editor => {
         [
           { x: WIDTH / 2, y: 0 },
           { x: WIDTH, y: HEIGHT / 2 },
-          { x: WIDTH / 2, y: HEIGHT }, 
+          { x: WIDTH / 2, y: HEIGHT },
           { x: 0, y: HEIGHT / 2 },
         ],
         { ...DIAMOND_OPTIONS }
