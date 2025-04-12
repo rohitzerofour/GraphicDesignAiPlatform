@@ -1,3 +1,4 @@
+import { ITextboxOptions } from 'fabric/fabric-impl';
 import { clear } from "console";
 import { fabric } from "fabric";
 import { useCallback, useState, useMemo } from "react";
@@ -17,6 +18,7 @@ import {
   STROKE_WIDTH,
   EditorHookProps,
   STROKE_DASH_ARRAY,
+  TEXT_OPTIONS,
 } from "../types";
 import { isTextType } from "../utils";
 
@@ -52,6 +54,14 @@ const buildEditor = ({
   };
 
   return {
+    addText: (value, options) => {
+      const object = new fabric.Textbox(value, {
+        ...TEXT_OPTIONS,
+        fill: fillColor,
+        ...options
+      });
+      addToCanvas(object);
+    },
     getActiveOpacity: () => {
       const selectedObject = selectedObjects[0];
       if (!selectedObject) return 1;
@@ -65,7 +75,7 @@ const buildEditor = ({
         object.set({ opacity: value });
       });
       canvas.renderAll();
-    },  
+    },
     bringForward: () => {
       canvas.getActiveObjects().forEach((object) => {
         canvas.bringForward(object);
