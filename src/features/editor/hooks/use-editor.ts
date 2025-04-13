@@ -1,5 +1,3 @@
-import { ITextboxOptions } from 'fabric/fabric-impl';
-import { clear } from "console";
 import { fabric } from "fabric";
 import { useCallback, useState, useMemo } from "react";
 
@@ -19,6 +17,7 @@ import {
   EditorHookProps,
   STROKE_DASH_ARRAY,
   TEXT_OPTIONS,
+  FONT_FAMILY,
 } from "../types";
 import { isTextType } from "../utils";
 
@@ -33,6 +32,8 @@ const buildEditor = ({
   selectedObjects,
   strokeDashArray,
   setStrokeDashArray,
+  fontFamily,
+  setFontFamily,
 }: BuildEditorProps): Editor => {
   const getWorkspace = () => {
     return canvas.getObjects().find((object) => object.name === "clip");
@@ -58,7 +59,7 @@ const buildEditor = ({
       const object = new fabric.Textbox(value, {
         ...TEXT_OPTIONS,
         fill: fillColor,
-        ...options
+        ...options,
       });
       addToCanvas(object);
     },
@@ -91,6 +92,16 @@ const buildEditor = ({
       canvas.renderAll();
 
       getWorkspace()?.sendToBack();
+    },
+    changeFontFamily: (value: string) => {
+      setFontFamily(value);
+      const activeObject = canvas.getActiveObjects().forEach((object) => {
+        if (isTextType(object.type)) {
+          //@ts-ignore
+          object.set({ fontFamily: value });
+        }
+      });
+      canvas.renderAll();
     },
     changeFillColor: (value: string) => {
       setFillColor(value);
@@ -230,6 +241,15 @@ const buildEditor = ({
 
       return value as string;
     },
+    getActiveFontFamily: () => {
+      const selectedObject = selectedObjects[0];
+      if (!selectedObject) return fontFamily;
+
+      // @ts-ignore
+      const value = selectedObject.get("fontFamily") || fontFamily;
+
+      return value;
+    },
     getActiveStrokeColor: () => {
       const selectedObject = selectedObjects[0];
       if (!selectedObject) return strokeColor;
@@ -263,6 +283,7 @@ export const useEditor = ({ clearSelectionCallback }: EditorHookProps) => {
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
   const [selectedObjects, setSelectedObjects] = useState<fabric.Object[]>([]);
 
+  const [fontFamily, setFontFamily] = useState<string>(FONT_FAMILY);
   const [fillColor, setFillColor] = useState<string>(FILL_COLOR);
   const [strokeColor, setStrokeColor] = useState<string>(STROKE_COLOR);
   const [strokeWidth, setStrokeWidth] = useState<number>(STROKE_WIDTH);
@@ -284,6 +305,8 @@ export const useEditor = ({ clearSelectionCallback }: EditorHookProps) => {
     if (canvas) {
       return buildEditor({
         canvas,
+        fontFamily,
+        setFontFamily,
         fillColor,
         setFillColor,
         strokeColor,
@@ -303,6 +326,7 @@ export const useEditor = ({ clearSelectionCallback }: EditorHookProps) => {
     strokeWidth,
     selectedObjects,
     strokeDashArray,
+    fontFamily,
   ]);
 
   const init = useCallback(

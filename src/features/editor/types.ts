@@ -2,6 +2,27 @@ import { fabric } from "fabric";
 import { ITextboxOptions } from "fabric/fabric-impl";
 import * as material from "material-colors";
 
+export const fonts = [
+  "Arial",
+  "Arial Black",
+  "Helvetica",
+  "Tahoma",
+  "Garamond",
+  "Brush Script MT",
+  "Palatino",
+  "Bookman",
+  "Impact",
+  "Lucida Sans Unicode",
+  "Geneva",
+  "Lucida Console",
+  "Comic Sans MS",
+  "Courier New",
+  "Georgia",
+  "Times New Roman",
+  "Trebuchet MS",
+  "Verdana",
+];
+
 export const selectionDependentTools = [
   "fill",
   "font",
@@ -111,10 +132,12 @@ export const TEXT_OPTIONS = {
 
 export type BuildEditorProps = {
   canvas: fabric.Canvas;
+  fontFamily: string;
   fillColor: string;
   strokeColor: string;
   strokeWidth: number;
   strokeDashArray: number[];
+  setFontFamily: (value: string) => void;
   setStrokeDashArray: (value: number[]) => void;
   setFillColor: (value: string) => void;
   setStrokeColor: (value: string) => void;
@@ -127,6 +150,7 @@ export interface EditorHookProps {
 }
 
 export interface Editor {
+  changeFontFamily: (value: string) => void;
   addText: (value: string, options?: ITextboxOptions) => void;
   getActiveOpacity: () => number;
   changeOpacity: (value: number) => void;
@@ -144,6 +168,7 @@ export interface Editor {
   addInverseTriangle: () => void;
   addDiamond: () => void;
   canvas: fabric.Canvas | null;
+  getActiveFontFamily: () => string;
   getActiveFillColor: () => string;
   getActiveStrokeColor: () => string;
   getActiveStrokeWidth: () => number;
