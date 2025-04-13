@@ -1,4 +1,4 @@
-import { FONT_WEIGHT } from "./../types";
+import { FONT_SIZE, FONT_WEIGHT } from "./../types";
 import { fabric } from "fabric";
 import { useCallback, useState, useMemo } from "react";
 
@@ -154,6 +154,23 @@ const buildEditor = ({
 
       // @ts-ignore
       const value = selectedObject.get("textAlign") || "left";
+
+      return value;
+    },
+    changeFontSize: (value: number) => {
+      canvas.getActiveObjects().forEach((object) => {
+        if (!isTextType(object.type)) return;
+        //@ts-ignore
+        object.set({ fontSize: value });
+      });
+      canvas.renderAll();
+    },
+    getActiveFontSize: () => {
+      const selectedObject = selectedObjects[0];
+      if (!selectedObject) return FONT_SIZE;
+
+      // @ts-ignore
+      const value = selectedObject.get("fontSize") || FONT_SIZE;
 
       return value;
     },

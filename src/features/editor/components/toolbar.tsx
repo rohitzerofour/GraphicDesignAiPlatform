@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ActiveTool, Editor, FONT_WEIGHT } from "../types";
+import { ActiveTool, Editor, FONT_SIZE, FONT_WEIGHT } from "../types";
 import { Hint } from "@/components/hint";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -21,6 +21,7 @@ import {
   FaStrikethrough,
   FaUnderline,
 } from "react-icons/fa";
+import { FontSizeInput } from "./font-size-input";
 
 interface ToolbarProps {
   editor: Editor | undefined;
@@ -47,6 +48,7 @@ export const Toolbar = ({
   const initialFontUnderline = editor?.getActiveFontUnderline() || false;
   const initialFontLinethrough = editor?.getActiveFontLinethrough() || false;
   const intialTextAlign = editor?.getActiveTextAlign() || "left";
+  const initialFontSize = editor?.getActiveFontSize() || FONT_SIZE;
 
   const [properties, setProperties] = useState({
     fillColor: initialFillColor,
@@ -57,6 +59,7 @@ export const Toolbar = ({
     fontUnderline: initialFontUnderline,
     fontLinethrough: initialFontLinethrough,
     textAlign: intialTextAlign,
+    fontSize: initialFontSize,
   });
 
   const selectedObject = editor?.selectedObjects[0];
@@ -92,11 +95,17 @@ export const Toolbar = ({
     setProperties((prev) => ({ ...prev, fontLinethrough: newValue }));
   };
 
-  const toggleTextAlign = (value: string) => {
+  const onChangeTextAlign = (value: string) => {
     if (!selectedObject) return;
     const newValue = properties.textAlign === value ? "left" : value;
     editor?.changeTextAlign(newValue);
     setProperties((prev) => ({ ...prev, textAlign: newValue }));
+  };
+
+  const onChangeFontSize = (value: number) => {
+    if (!selectedObject) return;
+    editor?.changeFontSize(value);
+    setProperties((prev) => ({ ...prev, fontSize: value }));
   };
 
   return (
@@ -231,7 +240,7 @@ export const Toolbar = ({
         <div className="flex items-center h-full justify-center">
           <Hint label="Align left" side="bottom" sideOffset={5}>
             <Button
-              onClick={() => toggleTextAlign("left")}
+              onClick={() => onChangeTextAlign("left")}
               size="icon"
               variant="ghost"
               className={cn(properties.textAlign === "left" && "bg-gray-100")}
@@ -245,7 +254,7 @@ export const Toolbar = ({
         <div className="flex items-center h-full justify-center">
           <Hint label="Align center" side="bottom" sideOffset={5}>
             <Button
-              onClick={() => toggleTextAlign("center")}
+              onClick={() => onChangeTextAlign("center")}
               size="icon"
               variant="ghost"
               className={cn(properties.textAlign === "center" && "bg-gray-100")}
@@ -259,7 +268,7 @@ export const Toolbar = ({
         <div className="flex items-center h-full justify-center">
           <Hint label="Align right" side="bottom" sideOffset={5}>
             <Button
-              onClick={() => toggleTextAlign("right")}
+              onClick={() => onChangeTextAlign("right")}
               size="icon"
               variant="ghost"
               className={cn(properties.textAlign === "right" && "bg-gray-100")}
@@ -267,6 +276,14 @@ export const Toolbar = ({
               <AlignRight className="size-4" />
             </Button>
           </Hint>
+        </div>
+      )}
+      {isText && (
+        <div className="flex items-center h-full justify-center">
+          <FontSizeInput
+            value={properties.fontSize}
+            onChange={onChangeFontSize}
+          />
         </div>
       )}
       <div className="flex items-center h-full justify-center">
