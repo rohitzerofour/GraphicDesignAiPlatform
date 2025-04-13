@@ -151,6 +151,7 @@ export interface EditorHookProps {
 }
 
 export interface Editor {
+  delete: () => void;
   changeFontSize: (value: number) => void;
   getActiveFontSize: () => number;
   changeTextAlign: (value: string) => void;
