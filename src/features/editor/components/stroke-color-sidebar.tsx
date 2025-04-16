@@ -18,6 +18,8 @@ export const StrokeColorSidebar = ({
 }: StrokeColorSidebarProps) => {
   const value = editor?.getActiveStrokeColor() || STROKE_COLOR;
 
+  const isImage = editor?.selectedObjects[0]?.type === "image";
+
   const onClose = () => {
     onChangeActiveTool("select");
   };
@@ -34,8 +36,10 @@ export const StrokeColorSidebar = ({
       )}
     >
       <ToolSidebarHeader
-        title="Stroke Color"
-        description="Add Stroke color to your elements"
+        title={isImage ? "Border" : "Stroke Color"}
+        description={`Add ${
+          isImage ? "Border" : "Stroke color"
+        } to your elements`}
       />
       <ScrollArea>
         <div className="p-4 space-y-6">

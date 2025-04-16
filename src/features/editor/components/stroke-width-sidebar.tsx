@@ -21,6 +21,8 @@ export const StrokeWidthSidebar = ({
   const widthValue = editor?.getActiveStrokeWidth() || STROKE_WIDTH;
   const typeValue = editor?.getActiveStrokeDashArray() || STROKE_DASH_ARRAY;
 
+  const isImage = editor?.selectedObjects[0]?.type === "image";
+
   const onClose = () => {
     onChangeActiveTool("select");
   };
@@ -41,19 +43,25 @@ export const StrokeWidthSidebar = ({
       )}
     >
       <ToolSidebarHeader
-        title="Stroke Options"
-        description="Modify stroke width of your elements"
+        title={isImage ? "Border options" : "Stroke options"}
+        description={`Modify ${
+          isImage ? "border width" : "stroke width"
+        } of your elements`}
       />
       <ScrollArea>
         <div className="p-4 space-y-4 border-b">
-          <Label className="text-sm">Stroke Width</Label>
+          <Label className="text-sm">
+            {isImage ? "Border Width" : "Stroke Width"}
+          </Label>
           <Slider
             value={[widthValue]}
             onValueChange={(values) => onChangeStrokeWidth(values[0])}
           />
         </div>
         <div className="p-4 space-y-4 border-b">
-          <Label className="text-sm">Stroke type</Label>
+          <Label className="text-sm">
+            {isImage ? "Border type" : "Stroke type"}
+          </Label>
           <Button
             onClick={() => onChangeStrokeType([])}
             variant="secondary"

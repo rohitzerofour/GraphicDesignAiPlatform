@@ -20,7 +20,7 @@ import {
   TEXT_OPTIONS,
   FONT_FAMILY,
 } from "../types";
-import { isTextType } from "../utils";
+import { createFilter, isTextType } from "../utils";
 
 const buildEditor = ({
   canvas,
@@ -56,6 +56,16 @@ const buildEditor = ({
   };
 
   return {
+    changeImageFilter: (value: string) => {
+      canvas.getActiveObjects().forEach((object) => {
+        if (object.type !== "image") return;
+        const imageObject = object as fabric.Image;
+        const effect = createFilter(value);
+        imageObject.filters = effect ? [effect] : [];
+        imageObject.applyFilters();
+        canvas.renderAll();
+      });
+    },
     delete: () => {
       canvas.getActiveObjects().forEach((object) => {
         canvas.remove(object);
