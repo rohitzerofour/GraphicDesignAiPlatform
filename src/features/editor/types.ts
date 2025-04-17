@@ -179,6 +179,8 @@ export interface EditorHookProps {
 }
 
 export interface Editor {
+  enableDrawingMode: () => void;
+  disableDrawingMode: () => void;
   onCopy: () => void;
   onPaste: () => void;
   changeImageFilter: (value: string) => void;
