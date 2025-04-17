@@ -158,6 +158,8 @@ export const TEXT_OPTIONS = {
 };
 
 export type BuildEditorProps = {
+  copy: () => void;
+  paste: () => void;
   canvas: fabric.Canvas;
   fontFamily: string;
   fillColor: string;
@@ -177,6 +179,8 @@ export interface EditorHookProps {
 }
 
 export interface Editor {
+  onCopy: () => void;
+  onPaste: () => void;
   changeImageFilter: (value: string) => void;
   delete: () => void;
   changeFontSize: (value: number) => void;

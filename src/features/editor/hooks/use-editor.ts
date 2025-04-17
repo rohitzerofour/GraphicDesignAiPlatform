@@ -21,8 +21,11 @@ import {
   FONT_FAMILY,
 } from "../types";
 import { createFilter, isTextType } from "../utils";
+import { useClipboard } from "./use-clipboard";
 
 const buildEditor = ({
+  copy,
+  paste,
   canvas,
   fillColor,
   strokeColor,
@@ -56,6 +59,8 @@ const buildEditor = ({
   };
 
   return {
+    onCopy: () => copy(),
+    onPaste: () => paste(),
     changeImageFilter: (value: string) => {
       canvas.getActiveObjects().forEach((object) => {
         if (object.type !== "image") return;
@@ -411,6 +416,8 @@ export const useEditor = ({ clearSelectionCallback }: EditorHookProps) => {
   const [strokeDashArray, setStrokeDashArray] =
     useState<number[]>(STROKE_DASH_ARRAY);
 
+  const { copy, paste } = useClipboard({ canvas });
+
   useAutoResize({
     canvas,
     container,
@@ -425,6 +432,8 @@ export const useEditor = ({ clearSelectionCallback }: EditorHookProps) => {
   const editor = useMemo(() => {
     if (canvas) {
       return buildEditor({
+        copy,
+        paste,
         canvas,
         fontFamily,
         setFontFamily,
@@ -441,6 +450,8 @@ export const useEditor = ({ clearSelectionCallback }: EditorHookProps) => {
     }
     return undefined;
   }, [
+    copy,
+    paste,
     canvas,
     fillColor,
     strokeColor,
