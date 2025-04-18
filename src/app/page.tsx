@@ -1,5 +1,7 @@
-import { Button } from "@/components/ui/button";
+import { auth } from "@/auth";
 
-export default function Home() {
-  return <Button>Click Me</Button>;
+export default async function Home() {
+  const session = await auth();
+
+  return <div>{JSON.stringify(session)}</div>;
 }
