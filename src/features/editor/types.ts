@@ -225,6 +225,11 @@ export interface EditorHookProps {
 }
 
 export interface Editor {
+  saveJpg: () => void;
+  saveSvg: () => void;
+  savePng: () => void;
+  saveJson: () => void;
+  loadJson: (json: string) => void;
   onUndo: () => void;
   onRedo: () => void;
   canUndo: () => boolean;
