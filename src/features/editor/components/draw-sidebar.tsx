@@ -1,10 +1,4 @@
-import {
-  ActiveTool,
-  Editor,
-  FILL_COLOR,
-  STROKE_COLOR,
-  STROKE_WIDTH,
-} from "../types";
+import { ActiveTool, Editor, STROKE_COLOR, STROKE_WIDTH } from "../types";
 import { cn } from "@/lib/utils";
 import { ToolSidebarHeader } from "./tool-sidebar-header";
 import { ToolSidebarClose } from "./tool-sidebar-close";
@@ -12,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { ColorPicker } from "./color-picker";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { useState } from "react";
 
 interface DrawSidebarProps {
   editor: Editor | undefined;

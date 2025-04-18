@@ -60,6 +60,21 @@ const buildEditor = ({
   };
 
   return {
+    zoomIn: () => {
+      let zoomRatio = canvas.getZoom();
+      zoomRatio += 0.05;
+      zoomRatio = Math.min(zoomRatio, 2);
+      const center = canvas.getCenter();
+      canvas.zoomToPoint(new fabric.Point(center.left, center.top), zoomRatio);
+    },
+    zoomOut: () => {
+      let zoomRatio = canvas.getZoom();
+      zoomRatio -= 0.05;
+      zoomRatio = Math.max(zoomRatio, 0.2);
+      const center = canvas.getCenter();
+      canvas.zoomToPoint(new fabric.Point(center.left, center.top), zoomRatio);
+    },
+    autoZoom,
     getWorkspace,
     changeSize: (value: { width: number; height: number }) => {
       const workspace = getWorkspace();
@@ -268,7 +283,7 @@ const buildEditor = ({
         }
         object.set({ stroke: value });
       });
-      canvas.freeDrawingBrush.color = strokeColor;
+      canvas.freeDrawingBrush.color = value;
       canvas.renderAll();
     },
     changeStrokeWidth: (value: number) => {
@@ -276,7 +291,7 @@ const buildEditor = ({
       const activeObject = canvas.getActiveObjects().forEach((object) => {
         object.set({ strokeWidth: value });
       });
-      canvas.freeDrawingBrush.width = strokeWidth;
+      canvas.freeDrawingBrush.width = value;
       canvas.renderAll();
     },
     changeStrokeDashArray: (value: number[]) => {

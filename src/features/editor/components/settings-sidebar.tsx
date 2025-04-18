@@ -100,7 +100,8 @@ export const SettingsSidebar = ({
             Resize
           </Button>
         </form>
-        <div className="p-4">
+        <div className="p-4 space-y-2">
+          <Label>Background</Label>
           <ColorPicker
             value={background as string}
             onChange={onChangeBackground}

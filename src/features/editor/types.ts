@@ -180,6 +180,9 @@ export interface EditorHookProps {
 }
 
 export interface Editor {
+  zoomIn: () => void;
+  zoomOut: () => void;
+  autoZoom: () => void;
   getWorkspace: () => fabric.Object | undefined;
   changeSize: (value: { width: number; height: number }) => void;
   changeBackground: (value: string) => void;
