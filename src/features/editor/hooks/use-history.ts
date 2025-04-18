@@ -26,13 +26,22 @@ export const useHistory = ({ canvas }: UseHistoryProps) => {
       const json = JSON.stringify(currentState);
 
       if (!skip && !skipSave.current) {
+        if (historyIndex < canvasHistory.current.length - 1) {
+          canvasHistory.current = canvasHistory.current.slice(
+            0,
+            historyIndex + 1
+          );
+        }
         canvasHistory.current.push(json);
-        setHistoryIndex(canvasHistory.current.length - 1);
+        setHistoryIndex((prevIndex) => {
+          const newIndex = canvasHistory.current.length - 1;
+          return newIndex;
+        });
       }
 
       //TODO: save callback
     },
-    [canvas]
+    [canvas, historyIndex]
   );
 
   const undo = useCallback(() => {
