@@ -1,6 +1,6 @@
 import { FONT_SIZE, FONT_WEIGHT, JSON_KEYS } from "./../types";
 import { fabric } from "fabric";
-import { useCallback, useState, useMemo } from "react";
+import { useCallback, useState, useMemo, useRef } from "react";
 
 import { useAutoResize } from "./use-auto-resize";
 import { useCanvasEvents } from "./use-canvas-events";
@@ -31,6 +31,7 @@ import { useHistory } from "./use-history";
 import { on } from "events";
 import { useHotkeys } from "./use-hotkeys";
 import { useWindowEvents } from "./use-window-events";
+import { useLoadState } from "./use-load-state";
 
 const buildEditor = ({
   save,
@@ -545,7 +546,17 @@ const buildEditor = ({
   };
 };
 
-export const useEditor = ({ clearSelectionCallback }: EditorHookProps) => {
+export const useEditor = ({
+  defaultState,
+  defaultWidth,
+  defaultHeight,
+  clearSelectionCallback,
+  saveCallback,
+}: EditorHookProps) => {
+  const initialState = useRef(defaultState);
+  const initialWidth = useRef(defaultWidth);
+  const initialHeight = useRef(defaultHeight);
+
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
   const [selectedObjects, setSelectedObjects] = useState<fabric.Object[]>([]);
@@ -560,7 +571,7 @@ export const useEditor = ({ clearSelectionCallback }: EditorHookProps) => {
   useWindowEvents();
 
   const { save, canRedo, canUndo, undo, redo, canvasHistory, setHistoryIndex } =
-    useHistory({ canvas });
+    useHistory({ canvas, saveCallback });
 
   const { copy, paste } = useClipboard({ canvas });
 
@@ -577,6 +588,14 @@ export const useEditor = ({ clearSelectionCallback }: EditorHookProps) => {
   });
 
   useHotkeys({ canvas, undo, redo, save, paste, copy });
+
+  useLoadState({
+    canvas,
+    autoZoom,
+    initialState,
+    canvasHistory,
+    setHistoryIndex,
+  });
 
   const editor = useMemo(() => {
     if (canvas) {
@@ -644,8 +663,8 @@ export const useEditor = ({ clearSelectionCallback }: EditorHookProps) => {
       initialCanvas.setHeight(initialContainer.offsetHeight);
 
       const initialWorkspace = new fabric.Rect({
-        width: 900,
-        height: 1200,
+        width: initialWidth.current,
+        height: initialHeight.current,
         name: "clip",
         fill: "white",
         selectable: false,
