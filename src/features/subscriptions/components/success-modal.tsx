@@ -1,0 +1,46 @@
+"use client";
+
+import {
+  Dialog,
+  DialogTitle,
+  DialogFooter,
+  DialogHeader,
+  DialogContent,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { useSuccessModal } from "../store/use-success-modal";
+
+export const SuccessModal = () => {
+  const router = useRouter();
+  const { isOpen, onClose } = useSuccessModal();
+
+  const handleClose = () => {
+    router.replace("/");
+    onClose();
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent>
+        <DialogHeader className="flex items-center space-y-4">
+          <Image src="/logo.svg" alt="Logo" width={36} height={36} />
+          <DialogTitle className="text-center">
+            Successfully subscribed
+          </DialogTitle>
+          <DialogDescription className="text-center">
+            You have successfully subscribed to the pro plan
+          </DialogDescription>
+        </DialogHeader>
+
+        <DialogFooter className="mt-4 pt-2 gap-y-2">
+          <Button className="w-full" onClick={handleClose}>
+            Continue
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};

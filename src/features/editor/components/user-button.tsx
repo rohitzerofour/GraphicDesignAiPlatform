@@ -8,11 +8,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { CreditCard, Loader, LogOut } from "lucide-react";
+import { useBilling } from "@/features/subscriptions/api/use-billing";
+import { usePaywall } from "@/features/subscriptions/hooks/use-paywall";
+import { CreditCard, Crown, Loader, LogOut } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 
 export const UserButton = () => {
+  const paywall = usePaywall();
   const session = useSession();
+  const mutation = useBilling();
+
+  const onClick = () => {
+    if (paywall.shouldBlock) {
+      paywall.triggerPaywall();
+      return;
+    }
+
+    mutation.mutate();
+  };
 
   if (session.status === "loading") {
     return <Loader className="size-4 animate-spin text-muted-foreground" />;
@@ -27,8 +40,14 @@ export const UserButton = () => {
 
   return (
     <DropdownMenu modal={false}>
-      <DropdownMenuTrigger>
-        {/* Add crown if user is subscribed */}
+      <DropdownMenuTrigger className="outline-none relative">
+        {!paywall.shouldBlock && !paywall.isLoading && (
+          <div className="absolute -top-1 -left-1 z-10 flex items-center">
+            <div className="rounded-full bg-white flex items-center justify-center p-1 drop-shadow-sm">
+              <Crown className="size-3 text-yellow-500 fill-yellow-500" />
+            </div>
+          </div>
+        )}
         <Avatar className="size-10 hover:opacity-75 transition">
           <AvatarImage alt={name} src={imageUrl || ""} />
           <AvatarFallback className="bg-blue-500 font-medium text-white">
@@ -37,12 +56,19 @@ export const UserButton = () => {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-60">
-        <DropdownMenuItem disabled={false} onClick={() => {}} className="h-10">
+        <DropdownMenuItem
+          disabled={false}
+          onClick={onClick}
+          className="h-10 cursor-pointer"
+        >
           <CreditCard className="size-4 mr-2" />
           Billing
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut()} className="h-10">
+        <DropdownMenuItem
+          onClick={() => signOut()}
+          className="h-10 cursor-pointer"
+        >
           <LogOut className="size-4 mr-2" />
           Log out
         </DropdownMenuItem>

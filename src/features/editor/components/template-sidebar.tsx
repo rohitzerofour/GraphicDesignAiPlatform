@@ -5,12 +5,13 @@ import { ToolSidebarHeader } from "@/features/editor/components/tool-sidebar-hea
 
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { AlertTriangle, Loader } from "lucide-react";
+import { AlertTriangle, Crown, Loader } from "lucide-react";
 import {
   ResponseType,
   useGetTemplates,
 } from "@/features/projects/api/use-get-templates";
 import { useConfirm } from "@/app/hooks/use-confirm";
+import { usePaywall } from "@/features/subscriptions/hooks/use-paywall";
 
 interface TemplateSidebarProps {
   editor: Editor | undefined;
@@ -23,6 +24,8 @@ export const TemplateSidebar = ({
   activeTool,
   onChangeActiveTool,
 }: TemplateSidebarProps) => {
+  const paywall = usePaywall();
+
   const [ConfirmDialog, confirm] = useConfirm(
     "Are you sure?",
     "You are about to replace the current project with this template."
@@ -38,7 +41,10 @@ export const TemplateSidebar = ({
   };
 
   const onClick = async (template: ResponseType["data"][0]) => {
-    //TODO: check if template is pro
+    if (template.isPro && paywall.shouldBlock) {
+      paywall.triggerPaywall();
+      return;
+    }
 
     const ok = await confirm();
     if (!ok) return;
@@ -91,6 +97,11 @@ export const TemplateSidebar = ({
                       alt={template.name || "Template"}
                       className="object-cover"
                     />
+                    {template.isPro && (
+                      <div className="absolute top-2 right-2 size-8 flex items-center justify-center bg-black/50 rounded-full z-[10]">
+                        <Crown className="size-4 fill-yellow-500 text-yellow-500" />
+                      </div>
+                    )}
                     <div className="opacity-0 group-hover:opacity-100 absolute left-0 bottom-0 w-full text-[10px] truncate text-white p-1 bg-black/50 text-left">
                       {template.name}
                     </div>

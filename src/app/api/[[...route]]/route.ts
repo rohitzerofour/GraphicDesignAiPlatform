@@ -6,6 +6,7 @@ import users from "./users";
 import { AuthConfig, initAuthConfig } from "@hono/auth-js";
 import authConfig from "@/auth.config";
 import projects from "./projects";
+import subscriptions from "./subscriptions";
 
 export const runtime = "nodejs";
 
@@ -31,7 +32,8 @@ const routes = app
   .route("/images", images)
   .route("/ai", ai)
   .route("/users", users)
-  .route("/projects", projects);
+  .route("/projects", projects)
+  .route("/subscriptions", subscriptions);
 
 export const GET = handle(app);
 export const POST = handle(app);
