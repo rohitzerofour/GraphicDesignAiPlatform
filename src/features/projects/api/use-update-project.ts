@@ -19,7 +19,7 @@ export const useUpdateProject = (id: string) => {
     mutationKey: ["project", { id }],
     mutationFn: async (json) => {
       const res = await client.api.projects[":id"].$patch({
-        json, 
+        json,
         param: { id },
       });
 
@@ -30,7 +30,7 @@ export const useUpdateProject = (id: string) => {
       return await res.json();
     },
     onSuccess: () => {
-      //TODO: invalidate project query
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
       queryClient.invalidateQueries({ queryKey: ["project", { id }] });
     },
     onError: () => {
