@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 import { db } from "@/db/drizzle";
 import { projects, projectsInsertSchema } from "@/db/schema";
 import { verifyAuth } from "@hono/auth-js";
@@ -7,6 +7,49 @@ import { Hono } from "hono";
 import { z } from "zod";
 
 const app = new Hono()
+  .get(
+    "/templates",
+    verifyAuth(),
+    zValidator(
+      "query",
+      z.object({ page: z.coerce.number(), limit: z.coerce.number() })
+    ),
+    async (c) => {
+      const { page, limit } = c.req.valid("query");
+
+      const data = await db
+        .select()
+        .from(projects)
+        .where(eq(projects.isTemplate, true))
+        .limit(limit)
+        .offset((page - 1) * limit)
+        .orderBy(desc(projects.isPro), desc(projects.updatedAt));
+
+      return c.json({ data });
+    }
+  )
+  .delete(
+    "/:id",
+    verifyAuth(),
+    zValidator("param", z.object({ id: z.string() })),
+    async (c) => {
+      const auth = c.get("authUser");
+      const { id } = c.req.valid("param");
+      if (!auth.token?.id) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+      const data = await db
+        .delete(projects)
+        .where(and(eq(projects.id, id), eq(projects.userId, auth.token.id)))
+        .returning();
+
+      if (data.length === 0) {
+        return c.json({ error: "Project not found" }, 404);
+      }
+
+      return c.json({ data: { id } });
+    }
+  )
   .post(
     "/:id/duplicate",
     verifyAuth(),

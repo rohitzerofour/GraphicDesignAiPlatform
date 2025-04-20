@@ -20,6 +20,10 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "tthepp1y8p.ufs.sh",
+      },
+      {
+        protocol: "https",
         hostname: "replicate.delivery",
       },
     ],

@@ -22,10 +22,23 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useDuplicateProject } from "@/features/projects/api/use-duplicate-project";
+import { useDeleteProject } from "@/features/projects/api/use-delete-project";
+import { useConfirm } from "../hooks/use-confirm";
 
 export const ProjectsSection = () => {
+  const [ConfirmDialog, confirm] = useConfirm(
+    "Are you sure?",
+    "You are about to delete this project. This action cannot be undone."
+  );
+  const removeMutation = useDeleteProject();
   const duplicateMutation = useDuplicateProject();
   const router = useRouter();
+
+  const onDelete = async (id: string) => {
+    const ok = await confirm();
+    if (!ok) return;
+    removeMutation.mutate({ id });
+  };
 
   const onCopy = (id: string) => {
     duplicateMutation.mutate({ id });
@@ -39,7 +52,7 @@ export const ProjectsSection = () => {
       <div className="space-y-4">
         <h3 className="font-semibold text-lg">Recent projects</h3>
         <div className="flex flex-col gap-y-4 items-center justify-center h-32">
-          <Loader className="size-6 text-muted-foreground" />
+          <Loader className="size-6 text-muted-foreground animate-spin" />
         </div>
       </div>
     );
@@ -59,7 +72,7 @@ export const ProjectsSection = () => {
     );
   }
 
-  if (!data.pages.length) {
+  if (!data.pages.length || data.pages[0].data.length === 0) {
     return (
       <div className="space-y-4">
         <h3 className="font-semibold text-lg">Recent projects</h3>
@@ -73,6 +86,7 @@ export const ProjectsSection = () => {
 
   return (
     <div className="space-y-4">
+      <ConfirmDialog />
       <h3 className="font-semibold text-lg">Recent projects</h3>
       <Table>
         <TableBody>
@@ -120,7 +134,7 @@ export const ProjectsSection = () => {
                         <DropdownMenuItem
                           className="h-10 cursor-pointer"
                           disabled={false}
-                          onClick={() => {}}
+                          onClick={() => onDelete(project.id)}
                         >
                           <Trash className="size-4 mr-2" />
                           Delete
