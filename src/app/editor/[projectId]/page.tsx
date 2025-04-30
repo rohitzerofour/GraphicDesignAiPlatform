@@ -7,13 +7,15 @@ import { Loader, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-interface EditorProjecIdtPageProps {
+// Fixed type definition to match Next.js PageProps expectations
+type EditorProjectIdPageProps = {
   params: {
     projectId: string;
   };
-}
+  searchParams?: { [key: string]: string | string[] | undefined };
+};
 
-const EditorProjectIdPage = ({ params }: EditorProjecIdtPageProps) => {
+const EditorProjectIdPage = ({ params }: EditorProjectIdPageProps) => {
   const { data, isLoading, isError } = useGetProject(params.projectId);
 
   if (isLoading || !data) {
@@ -36,7 +38,7 @@ const EditorProjectIdPage = ({ params }: EditorProjecIdtPageProps) => {
     );
   }
 
-return <Editor initialData={data}/>;
+  return <Editor initialData={data} />;
 };
 
 export default EditorProjectIdPage;
